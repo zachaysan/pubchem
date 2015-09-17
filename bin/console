@@ -1,6 +1,6 @@
 #!/usr/bin/env ruby
 require "bundler/setup"
-require "yajl"
+require "pubchem"
 
 # You can add fixtures and/or initialization code here to make experimentin
 # with your gem easier. You can also use a different console, if you like.
