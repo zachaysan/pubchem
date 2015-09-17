@@ -11,8 +11,8 @@ Gem::Specification.new do |spec|
 
   spec.summary = %q{ Collect Pubchem substance and compound data }
   spec.description = %q{ While there is a great FTP mirror for
-                         molecule data, it is hard to deal with 
-                         their form. This helps with that!} 
+                         molecule data, it is hard to deal with
+                         their form. This helps with that!}
   spec.homepage = "https://github.com/zachaysan/pubchem"
   spec.license = "MIT"
 
@@ -21,7 +21,7 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_runtime_dependency "mechanize"
+  spec.add_runtime_dependency "mechanize", "~> 2.7.3"
 
   spec.add_development_dependency "bundler", "~> 1.10"
 
