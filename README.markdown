@@ -4,11 +4,9 @@ For getting all that juicy substance and compound data from Pubchem.
 
 ## Installation
 
-`apt-get install wget`
+`apt-get install wget` or `sudo apt-get install wget`
 
-Or
-
-`sudo apt-get install wget`
+then
 
 `gem install pubchem`
 
