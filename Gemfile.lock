@@ -2,13 +2,21 @@ PATH
   remote: .
   specs:
     pubchem (0.0.5)
+      fuzzy-string-match (~> 0.9.7)
       mechanize (~> 2.7.3)
+      nokogiri (~> 1.6.6.2)
+      ox (~> 2.2.1)
 
 GEM
   remote: https://rubygems.org/
   specs:
+    RubyInline (3.12.4)
+      ZenTest (~> 4.3)
+    ZenTest (4.11.0)
     domain_name (0.5.24)
       unf (>= 0.0.5, < 1.0.0)
+    fuzzy-string-match (0.9.7)
+      RubyInline (>= 3.8.6)
     http-cookie (1.0.2)
       domain_name (~> 0.5)
     mechanize (2.7.3)
@@ -27,6 +35,7 @@ GEM
     nokogiri (1.6.6.2)
       mini_portile (~> 0.6.0)
     ntlm-http (0.1.1)
+    ox (2.2.1)
     unf (0.1.4)
       unf_ext
     unf_ext (0.0.7.1)
