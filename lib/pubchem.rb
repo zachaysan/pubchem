@@ -1,4 +1,5 @@
 require 'mechanize'
+require_relative 'pubchem/reader'
 
 class Pubchem
 
@@ -46,9 +47,9 @@ class Pubchem
 
       ftp_url = ftp_link.to_s
       size = ftp_url.size
-  
+
       # We don't want to allow scary characters into our URL since it is a
-      # security risk, so we only allow lower and upper case letters, numbers, 
+      # security risk, so we only allow lower and upper case letters, numbers,
       # /   forward slashes
       # :   colons
       # .   periods
