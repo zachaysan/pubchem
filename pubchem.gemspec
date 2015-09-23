@@ -22,6 +22,9 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_runtime_dependency "mechanize", "~> 2.7.3"
+  spec.add_runtime_dependency "nokogiri", "~> 1.6.6.2"
+  spec.add_runtime_dependency "fuzzy-string-match", "~> 0.9.7"
+  spec.add_runtime_dependency "ox", "~> 2.2.1"
 
   spec.add_development_dependency "bundler", "~> 1.10"
 
