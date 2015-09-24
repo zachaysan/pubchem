@@ -1,1 +1,4 @@
 pkg
+xml
+!xml/substance_sample.xml
+!xml/compound_sample.xml
