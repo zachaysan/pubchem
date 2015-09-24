@@ -2,6 +2,10 @@
 
 For getting all that juicy substance and compound data from Pubchem.
 
+Please email me if you end up using this: zachaysan@gmail.com
+
+I'd be interested to hear if open sourcing this helped someone else.
+
 ## Installation
 
 `apt-get install wget` or `sudo apt-get install wget`
@@ -12,10 +16,4 @@ then
 
 ## Usage
 
-```ruby
-pubchem = Pubchem.new
-
-pubchem.get_ids([16,405], "~/yay.zip")
-
-puts "Do a happy dance!"
-```
+See `example.rb` for how to use Pubchem.
