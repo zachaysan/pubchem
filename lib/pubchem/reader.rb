@@ -5,48 +5,52 @@ require 'ox'
 
 class Reader
 
-  attr_accessor :names, :pubchem_ids
+  attr_accessor :names,
+                :pubchem_substance_ids,
+                :pubchem_compound_ids
 
   def initialize(names_filename=nil,
-                 pubchem_ids_filename=nil,
-                 pubchem_types_filename=nil)
+                 pubchem_substance_ids_filename=nil,
+                 pubchem_compound_ids_filename=nil)
 
     @fuzzy_matcher = FuzzyStringMatch::JaroWinkler
                      .create( :native )
 
     return if initialize_from_files( names_filename,
-                                     pubchem_ids_filename,
-                                     pubchem_types_filename )
+                                     pubchem_substance_ids_filename,
+                                     pubchem_compound_ids_filename )
 
-    @names = Hash.new         { |h,k| h[k] = Set.new }
-    @pubchem_ids = Hash.new   { |h,k| h[k] = Set.new }
-    @pubchem_types = Hash.new { |h,k| h[k] = Set.new }
+    @names = Hash.new { |h,k| h[k] = Set.new }
+
+    @pubchem_substance_ids = Hash.new { |h,k| h[k] = Set.new }
+    @pubchem_compound_ids = Hash.new  { |h,k| h[k] = Set.new }
 
   end
 
   def initialize_from_files(names_filename,
-                            pubchem_ids_filename,
-                            pubchem_types_filename)
+                            pubchem_substance_ids_filename,
+                            pubchem_compound_ids_filename)
 
     filenames = [ names_filename,
-                  pubchem_ids_filename,
-                  pubchem_types_filename ]
+                  pubchem_substance_ids_filename,
+                  pubchem_compound_ids_filename ]
 
     return nil unless filenames.any?
     raise "Both filenames required" unless filenames.all?
 
     @names = Ox.load_file(names_filename)
-    @pubchem_ids = Ox.load_file(pubchem_ids_filename)
+    @pubchem_substance_ids = Ox.load_file(pubchem_substance_ids_filename)
+    @pubchem_compound_ids = Ox.load_file(pubchem_compound_ids_filename)
 
   end
 
   def save(names_filename,
-           pubchem_ids_filename,
-           pubchem_types_filename)
+           pubchem_substance_ids_filename,
+           pubchem_compound_ids_filename)
 
     Ox.to_file(names_filename, @names, indent: 0)
-    Ox.to_file(pubchem_ids_filename, @pubchem_ids, indent: 0)
-    Ox.to_file(pubchem_types_filename, @pubchem_types, indent: 0)
+    Ox.to_file(pubchem_substance_ids_filename, @pubchem_substance_ids, indent: 0)
+    Ox.to_file(pubchem_compound_ids_filename, @pubchem_compound_ids, indent: 0)
 
   end
 
@@ -117,8 +121,6 @@ class Reader
 
   def parse_info_data(info_data)
 
-    # "IUPAC Name"
-    # "SMILES"
     urn_label = info_data.css("PC-InfoData_urn
                                PC-Urn
                                PC-Urn_label").first.text
@@ -141,10 +143,17 @@ class Reader
     # Speed up lookups with sorted names
     @names[self.short_code(name)].add name
 
-    @pubchem_compound_ids[name].add @pubchem_id
+    if @current_type == "substance"
+      @pubchem_substance_ids[name].add @pubchem_id
+    elsif @current_type == "compound"
+      @pubchem_compound_ids[name].add @pubchem_id
+    else
+      raise "Unknown substance"
+    end
+
   end
 
-  def fuzzy_name_lookup(lookup_name, threshold=0.99)
+  def fuzzy_name_lookup(lookup_name, threshold)
 
     closest_distance = 0.0
     closest_name = nil
@@ -166,18 +175,45 @@ class Reader
 
     end
 
-    if closest_distance > 0.99
+    return closest_name if closest_distance > 0.99
 
-      id_matching_count = @pubchem_ids[closest_name].count
-      if id_matching_count > 1
-        # TODO: Think of a way of more intelligently choosing something that matches.
-        print "Warning: randomly picking result out of: #{id_matching_count}"
+  end
+
+  def match_list_of_names(names, threshold=0.99)
+    @matched_names = names.inject({}) do |acc, name|
+      acc[name] = self.fuzzy_name_lookup(name, threshold)
+      acc
+    end
+  end
+
+  def retrieve_ids(collection)
+    msg = "@matched_names required, see #{self.class}#match_list_of_names"
+
+    raise msg unless @matched_names
+
+    @matched_names.inject({}) do |acc, name|
+      input_name = name[0]
+      matched_name = name[1]
+
+      if matched_name
+        ids = collection[matched_name]
+        if ids.size > 1
+          puts "WARNING: Multiple matching sets"
+        end
+        collection_id = collection[matched_name].first
+        acc[input_name] = collection_id if collection_id
       end
 
-      return @pubchem_ids[closest_name].first
-
+      acc
     end
+  end
 
+  def retrieve_substance_ids
+    self.retrieve_ids(@pubchem_substance_ids)
+  end
+
+  def retrieve_compound_ids
+    self.retrieve_ids(@pubchem_compound_ids)
   end
 
   def short_code(name)
