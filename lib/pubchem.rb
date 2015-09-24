@@ -14,9 +14,26 @@ class Pubchem
 
   end
 
+  def get_compound_ids(ids,
+                       filename,
+                       retrieve_mode: :image,
+                       delay: nil)
+
+    self.get_ids(ids, filename, :compound, delay: delay)
+  end
+
+  def get_substance_ids(ids,
+                       filename,
+                       retrieve_mode: :image,
+                       delay: nil)
+
+    self.get_ids(ids, filename, :substance, delay: delay)
+
+  end
+
   def get_ids(ids,
               filename,
-              db: :compound,
+              db,
               retrieve_mode: :image,
               delay: nil)
 
