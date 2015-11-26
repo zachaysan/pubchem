@@ -175,7 +175,7 @@ class Reader
 
     end
 
-    return closest_name if closest_distance > 0.99
+    return closest_name if closest_distance > threshold
 
   end
 
